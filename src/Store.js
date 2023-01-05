@@ -1,4 +1,8 @@
-import { createStore } from "redux";
-import reducer from "./Reducer/reducer";
-const store=createStore(reducer)
-export default store
+import { configureStore } from "@reduxjs/toolkit";
+import todoreducers from "./Reducer/reducer";
+const store = configureStore({
+  reducer: {
+    FirebaseData: todoreducers,
+  },
+});
+export default store;

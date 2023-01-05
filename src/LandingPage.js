@@ -1,22 +1,45 @@
-import React, { useState } from "react";
+import React from "react";
 import "./LandingPage.css";
 import { getDatabase, ref, push } from "firebase/database";
 import FirebaseApp from "./Firebase";
 import { DisplayTodo } from "./DisplayTodo";
+import { addTodo, disableTodo, checkTodo } from "./Reducer/reducer";
+import { useDispatch, useSelector } from "react-redux";
 export const LandingPage = () => {
-  const [input, setInput] = useState("");
+  // Taking state from redux
+  const add = useSelector((state) => state.FirebaseData);
+  const dispatch = useDispatch();
   const InputHandler = (e) => {
-    setInput(e.target.value);
+    dispatch(addTodo(e.target.value));
   };
+  // Adding task in list 
   const AddTodoHandler = () => {
-    const db = getDatabase(FirebaseApp);
-    const todoRef = ref(db, "/todos");
-    const todo = {
-      input,
-      done: false,
-    };
-
-    push(todoRef, todo);
+    if (add.todo !== "") {
+      const db = getDatabase(FirebaseApp);
+      const todoRef = ref(db, "/todos");
+      const todo = {
+        input: add.todo,
+        done: false,
+      };
+      push(todoRef, todo);
+      dispatch(addTodo(" "));
+      dispatch(disableTodo(false));
+    } else {
+      alert("Please write something");
+    }
+  };
+// Showing all task functinality
+  const AllButtonHandler = () => {
+    dispatch(checkTodo("all"));
+  };
+  // Showing done task
+  const DoneButtonHandler = () => {
+    dispatch(checkTodo("done"));
+    console.log(add.show);
+  };
+  // showing todo task
+  const TodoButtonHandler = () => {
+    dispatch(checkTodo("Todo"));
   };
   return (
     <div className="LandingPage">
@@ -33,8 +56,8 @@ export const LandingPage = () => {
           <input
             type="text"
             className="form-control"
-            placeholder="Username"
-            value={input}
+            placeholder="Write todo here...."
+            value={add.todo}
             onChange={InputHandler}
             aria-label="Username"
             aria-describedby="basic-addon1"
@@ -57,8 +80,9 @@ export const LandingPage = () => {
           type="button"
           className="btn btn-primary active"
           data-bs-toggle="button"
-          autocomplete="off"
+          autoComplete="off"
           aria-pressed="true"
+          onClick={AllButtonHandler}
           style={{ paddingLeft: "4%", paddingRight: "4%", width: "20%" }}
         >
           All
@@ -67,8 +91,9 @@ export const LandingPage = () => {
           type="button"
           className="btn btn-primary active"
           data-bs-toggle="button"
-          autocomplete="off"
+          autoComplete="off"
           aria-pressed="true"
+          onClick={DoneButtonHandler}
           style={{
             marginLeft: "4%",
             paddingLeft: "4%",
@@ -82,8 +107,9 @@ export const LandingPage = () => {
           type="button"
           className="btn btn-primary active"
           data-bs-toggle="button"
-          autocomplete="off"
+          autoComplete="off"
           aria-pressed="true"
+          onClick={TodoButtonHandler}
           style={{
             marginLeft: "4%",
             paddingLeft: "4%",

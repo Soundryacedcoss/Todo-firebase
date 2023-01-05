@@ -1,9 +1,13 @@
-import './App.css';
-import { LandingPage } from './LandingPage';
+import "./App.css";
+import { LandingPage } from "./LandingPage";
+import { Provider } from "react-redux";
+import store from "./Store";
 function App() {
   return (
     <div className="App">
-     <LandingPage/>
+      <Provider store={store}>
+        <LandingPage />
+      </Provider>
     </div>
   );
 }
